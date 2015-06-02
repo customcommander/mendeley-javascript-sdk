@@ -66,6 +66,30 @@ define(function(require) {
                 expect(flow.refreshToken()).toBe(false);
             });
 
+            it('should NOT authenticate if a token has been provided in the options', function() {
+                var win = require('mocks/window')('a:', 'b', '/c');
+                var options = {win: win, clientId: 9999, accessToken: 'xxx', authenticateOnStart: true};
+
+                var flow = auth.implicitGrantFlow(options);
+                expect(win.location + '').toEqual('a://b/c');
+            });
+
+            it('should return the token that has been provided in the options', function() {
+                var win = require('mocks/window')();
+                var options = {win: win, clientId: 9999, accessToken: 'yyy', authenticateOnStart: true};
+
+                var flow = auth.implicitGrantFlow(options);
+                expect(flow.getToken()).toEqual('yyy');
+            });
+
+            it('should write the token provided in the options in a cookie', function () {
+                var win = require('mocks/window')();
+                var options = {win: win, clientId: 9999, accessToken: '777', authenticateOnStart: true};
+
+                auth.implicitGrantFlow(options);
+                expect(win.document.cookie).toMatch(/accessToken=777/);
+            });
+
         });
 
         describe('auth code flow', function() {
@@ -140,6 +164,29 @@ define(function(require) {
                 expect(ajaxRequest.url).toBe('/refresh');
             });
 
+            it('should NOT authenticate if a token has been provided in the options', function() {
+                var win = require('mocks/window')('x:', 'y', '/z');
+                var options = {win: win, clientId: 9999, accessToken: '123', authenticateOnStart: true};
+
+                var flow = auth.authCodeFlow(options);
+                expect(win.location + '').toEqual('x://y/z');
+            });
+
+            it('should return the token that has been provided in the options', function() {
+                var win = require('mocks/window')();
+                var options = {win: win, clientId: 9999, accessToken: '456', authenticateOnStart: true};
+
+                var flow = auth.authCodeFlow(options);
+                expect(flow.getToken()).toEqual('456');
+            });
+
+            it('should write the token provided in the options in a cookie', function () {
+                var win = require('mocks/window')();
+                var options = {win: win, clientId: 9999, accessToken: '789', authenticateOnStart: true};
+
+                auth.authCodeFlow(options);
+                expect(win.document.cookie).toMatch(/accessToken=789/);
+            });
         });
     });
 
