@@ -63,7 +63,7 @@ define(function(require) {
                 var options = {win: win, clientId: 9999, refreshAccessTokenUrl: '/refresh'};
 
                 var flow = auth.implicitGrantFlow(options);
-                expect(flow.refreshToken()).toBe(false);
+                expect(flow.refreshToken).toBe(auth.noop);
             });
 
         });
